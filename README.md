@@ -40,13 +40,19 @@ mysql -uroot -p < db/init/init.sql
 
 ### 2. 配置后端
 
+复制配置模板（首次 clone 后执行一次）：
+
 ```bash
-# 复制配置模板（首次 clone 后执行一次）
+# Linux / macOS / Git Bash
 cp book-management-system/src/main/resources/application.example.yml \
    book-management-system/src/main/resources/application.yml
+
+# Windows (cmd / PowerShell)
+copy book-management-system\src\main\resources\application.example.yml \
+     book-management-system\src\main\resources\application.yml
 ```
 
-设置数据库密码环境变量：
+设置数据库密码环境变量（**可选**，不设置时默认使用 `root`）：
 
 ```bash
 # Windows (cmd)
@@ -59,7 +65,7 @@ $env:DB_PASSWORD="你的密码"
 export DB_PASSWORD=你的密码
 ```
 
-> 也可以直接在 `application.yml` 中把 `${DB_PASSWORD}` 替换为真实密码。
+> 数据库密码优先级：环境变量 `DB_PASSWORD` > 默认值 `root`。也可以直接修改 `application.yml` 中的 `password` 字段。
 
 ### 3. 启动后端
 
@@ -193,7 +199,7 @@ npm run dev
 
 ## 常见问题
 
-- **后端启动报数据库连接失败**：确认 MySQL 已启动、端口正确、`DB_PASSWORD` 与本地数据库一致，并已执行 `db/init/init.sql`。
+- **后端启动报数据库连接失败**：确认 MySQL 已启动；若你的 MySQL 端口不是 3307，请修改 `application.yml` 中 `datasource.url` 的端口；确认 `DB_PASSWORD`（或默认值 `root`）与本地数据库一致；并已执行 `db/init/init.sql`。
 - **前端接口不通 / 404**：确认后端运行在 8080 端口，且前端 `src/utils/request.js` 中 `baseURL` 为 `http://localhost:8080`。
 - **前端跨域报错**：后端已配置全局 CORS，正常情况下不会出现；请通过 `npm run dev` 启动，不要直接双击打开页面文件。
 - **端口占用**：8080（后端）/ 5173（前端）被占用时，分别修改 `application.yml` 和 `vite.config.js`。
